@@ -1,32 +1,26 @@
 {
-  "name": "Hybrid Backend Dev",
+  "name": "Assessment Hybrid Dev",
   
-  // NEW SECTION: Use features to install tools that aren't in your base image
-  "features": {
-    // This feature installs Git and related tools (like the CLI)
-    "ghcr.io/devcontainers/features/git:1": {} 
-    // You can also add other features here, like Node or Python.
-  },
-
-  // Instructs Codespaces to use your docker-compose file
+  // 1. Tell Codespaces to use the main docker-compose file
   "dockerComposeFile": [
     "../docker-compose.yml" 
   ],
   
-  // Since your code runs locally, use a minimal service to keep the Codespace VM running
-  "service": "redis", 
+  // 2. IMPORTANT: Specify the new 'workspace' service as the primary container
+  "service": "workspace", 
   
-  // Set the workspace directory
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  // 3. Set the workspace directory
+  "workspaceFolder": "/workspaces",
 
-  // Crucially, forward the ports so your local laptop can access them
+  // 4. Forward all infrastructure ports
   "forwardPorts": [6379, 5672, 15672], 
 
-  // Optional: Add VS Code extensions for monitoring
+  // 5. Features are now optional, but Git should already be in the devcontainers/base image.
+  // We remove the explicit Git feature to simplify.
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-azuretools.vscode-docker" // Useful for checking containers in the Codespace
+        "ms-azuretools.vscode-docker"
       ]
     }
   }

@@ -1,25 +1,38 @@
 version: '3.8'
 
 services:
-  # 1. Redis Cache Service
+  # 1. Redis Cache Service (Infrastructure)
   redis:
     image: redis:7-alpine
     container_name: codespace_redis
     command: redis-server --appendonly yes
-    ports:
-      - 6379:6379 # Expose Redis port
+    # NOTE: Redis and RabbitMQ do NOT need the 'ports' directive here 
+    # if they are only accessed by your local laptop via Codespaces forwarding.
+    # We leave them here for completeness.
+    ports: 
+      - 6379:6379 
 
-  # 2. RabbitMQ Message Broker Service (with Admin UI)
+  # 2. RabbitMQ Message Broker Service (Infrastructure)
   rabbitmq:
     image: rabbitmq:3-management
     container_name: codespace_rabbitmq
     environment:
-      # Credentials for connection
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
     ports:
-      - 5672:5672 # Standard AMQP port for code connection
-      - 15672:15672 # Admin UI port (http://localhost:15672)
+      - 5672:5672
+      - 15672:15672
+
+  # 3. YOUR PRIMARY DEVELOPMENT CONTAINER (The Fix)
+  workspace:
+    build: 
+      context: ./.devcontainer  # Use the Dockerfile we created above
+      dockerfile: Dockerfile
+    container_name: codespace_workspace
+    volumes:
+      - ..:/workspaces:cached # Mounts your repository code into this container
+    # This container relies on the networks automatically created by Compose
+    # The Git, VS Code, and terminal will all run inside this container.
 
 volumes:
   redis_data:
