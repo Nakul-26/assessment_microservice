@@ -1,26 +1,30 @@
+// .devcontainer/devcontainer.json
 {
   "name": "Assessment Hybrid Dev",
   
-  // 1. Tell Codespaces to use the main docker-compose file
   "dockerComposeFile": [
     "../docker-compose.yml" 
   ],
   
-  // 2. IMPORTANT: Specify the new 'workspace' service as the primary container
+  // CRITICAL: Point the development environment to the robust 'workspace' service
   "service": "workspace", 
   
-  // 3. Set the workspace directory
+  // This is the default location for the code inside the 'workspace' container
   "workspaceFolder": "/workspaces",
 
-  // 4. Forward all infrastructure ports
-  "forwardPorts": [6379, 5672, 15672], 
+  // Forward the necessary infrastructure ports to your local machine (hybrid development)
+  "forwardPorts": [
+    6379,    // Redis
+    5672,    // RabbitMQ AMQP
+    15672    // RabbitMQ Admin UI
+  ], 
 
-  // 5. Features are now optional, but Git should already be in the devcontainers/base image.
-  // We remove the explicit Git feature to simplify.
+  // Optional: VS Code extensions to install inside the Codespace for development
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "esbenp.prettier-vscode" // Example
       ]
     }
   }

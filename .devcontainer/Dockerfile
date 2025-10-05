@@ -1,8 +1,8 @@
-# .devcontainer/Dockerfile
+# .devcontainer/devcontainer.Dockerfile
 
-# We use the standard minimal Dev Container image based on Debian 
-# It includes git, zsh, common tools, and Docker support.
-FROM mcr.microsoft.com/devcontainers/base:debian
+# Use the official Dev Containers Universal Image (based on Debian/Ubuntu).
+# This image comes pre-installed with Git, Node, Python, and the bash shell.
+FROM mcr.microsoft.com/devcontainers/universal:latest
 
-# This image already includes Git, fixing your previous error.
-# You can add any extra tools for your microservices development here.
+# If you need to install any other tools not in the universal image, 
+# you would add them here using RUN commands (e.g., sudo apt-get install <package>)

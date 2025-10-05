@@ -1,18 +1,18 @@
+# docker-compose.yml
 version: '3.8'
 
 services:
-  # 1. Redis Cache Service (Infrastructure)
+  # 1. Infrastructure: Redis Cache Service
   redis:
     image: redis:7-alpine
     container_name: codespace_redis
     command: redis-server --appendonly yes
-    # NOTE: Redis and RabbitMQ do NOT need the 'ports' directive here 
-    # if they are only accessed by your local laptop via Codespaces forwarding.
-    # We leave them here for completeness.
     ports: 
       - 6379:6379 
+    volumes:
+      - redis_data:/data # Persist Redis data
 
-  # 2. RabbitMQ Message Broker Service (Infrastructure)
+  # 2. Infrastructure: RabbitMQ Message Broker Service
   rabbitmq:
     image: rabbitmq:3-management
     container_name: codespace_rabbitmq
@@ -20,19 +20,25 @@ services:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
     ports:
-      - 5672:5672
-      - 15672:15672
-
-  # 3. YOUR PRIMARY DEVELOPMENT CONTAINER (The Fix)
-  workspace:
-    build: 
-      context: ./.devcontainer  # Use the Dockerfile we created above
-      dockerfile: Dockerfile
-    container_name: codespace_workspace
+      - 5672:5672   # AMQP port
+      - 15672:15672 # Management UI port
     volumes:
-      - ..:/workspaces:cached # Mounts your repository code into this container
-    # This container relies on the networks automatically created by Compose
-    # The Git, VS Code, and terminal will all run inside this container.
+      - rabbitmq_data:/var/lib/rabbitmq # Persist RabbitMQ data
+
+  # 3. Development Environment: The Workspace Container (THE FIX)
+  workspace:
+    # Build the image using the dedicated Dockerfile in the .devcontainer folder
+    build: 
+      context: ./.devcontainer
+      dockerfile: devcontainer.Dockerfile
+    container_name: codespace_workspace
+    
+    # Map the entire repository into the container's workspace folder
+    volumes:
+      - .:/workspaces:cached
+      
+    # Keep the container running indefinitely so VS Code can attach to it.
+    entrypoint: /bin/sh -c "while sleep 1000; do :; done" 
 
 volumes:
   redis_data:
