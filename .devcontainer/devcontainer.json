@@ -1,6 +1,13 @@
 {
   "name": "Hybrid Backend Dev",
   
+  // NEW SECTION: Use features to install tools that aren't in your base image
+  "features": {
+    // This feature installs Git and related tools (like the CLI)
+    "ghcr.io/devcontainers/features/git:1": {} 
+    // You can also add other features here, like Node or Python.
+  },
+
   // Instructs Codespaces to use your docker-compose file
   "dockerComposeFile": [
     "../docker-compose.yml" 
