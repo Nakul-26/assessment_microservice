@@ -1,8 +1,10 @@
 # .devcontainer/devcontainer.Dockerfile
 
-# Use the official Dev Containers Universal Image (based on Debian/Ubuntu).
-# This image comes pre-installed with Git, Node, Python, and the bash shell.
+# Use the feature-rich Universal Image. Git and essential tools are pre-installed here.
 FROM mcr.microsoft.com/devcontainers/universal:latest
 
-# If you need to install any other tools not in the universal image, 
-# you would add them here using RUN commands (e.g., sudo apt-get install <package>)
+# Set the workspace directory
+WORKDIR /workspaces
+
+# Command to keep the container running so VS Code can stay attached
+CMD [ "/bin/bash", "-c", "while sleep 1000; do :; done" ]

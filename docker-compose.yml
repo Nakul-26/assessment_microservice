@@ -2,7 +2,7 @@
 version: '3.8'
 
 services:
-  # 1. Infrastructure: Redis Cache Service
+  # 1. Infrastructure: Redis Cache Service (Uses Alpine - Minimal, No Git)
   redis:
     image: redis:7-alpine
     container_name: codespace_redis
@@ -10,7 +10,7 @@ services:
     ports: 
       - 6379:6379 
     volumes:
-      - redis_data:/data # Persist Redis data
+      - redis_data:/data 
 
   # 2. Infrastructure: RabbitMQ Message Broker Service
   rabbitmq:
@@ -20,26 +20,25 @@ services:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
     ports:
-      - 5672:5672   # AMQP port
-      - 15672:15672 # Management UI port
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq # Persist RabbitMQ data
+      - 5672:5672
+      - 15672:15672
 
-  # 3. Development Environment: The Workspace Container (THE FIX)
+  # 3. Development Environment: The Workspace Container (Primary Dev Spot)
   workspace:
-    # Build the image using the dedicated Dockerfile in the .devcontainer folder
+    # Build the image using our local Dockerfile
     build: 
       context: ./.devcontainer
       dockerfile: devcontainer.Dockerfile
     container_name: codespace_workspace
-    
-    # Map the entire repository into the container's workspace folder
     volumes:
+      # Mount the repository into the workspace container
       - .:/workspaces:cached
       
-    # Keep the container running indefinitely so VS Code can attach to it.
-    entrypoint: /bin/sh -c "while sleep 1000; do :; done" 
-
+    # Ensure this container is attached to the same network as Redis/RabbitMQ
+    depends_on:
+      - redis
+      - rabbitmq
+    
 volumes:
   redis_data:
   rabbitmq_data:
