@@ -1,0 +1,26 @@
+{
+  "name": "Hybrid Backend Dev",
+  
+  // Instructs Codespaces to use your docker-compose file
+  "dockerComposeFile": [
+    "../docker-compose.yml" 
+  ],
+  
+  // Since your code runs locally, use a minimal service to keep the Codespace VM running
+  "service": "redis", 
+  
+  // Set the workspace directory
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+  // Crucially, forward the ports so your local laptop can access them
+  "forwardPorts": [6379, 5672, 15672], 
+
+  // Optional: Add VS Code extensions for monitoring
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker" // Useful for checking containers in the Codespace
+      ]
+    }
+  }
+}
