@@ -31,11 +31,12 @@ async function main() {
         channel.consume(QUEUE_NAME, async (msg) => {
             if (msg !== null) {
                 const submissionId = msg.content.toString();
-                console.log(`Received submission ID: ${submissionId}`);
+                console.log(`📥 Received submission ID: ${submissionId}`);
                 try {
                     await executeCode(submissionId);
+                    console.log(`✅ Successfully processed submission ID: ${submissionId}`);
                 } catch (err) {
-                    console.error(`Error processing submission ${submissionId}:`, err);
+                    console.error(`❌ Error processing submission ${submissionId}:`, err);
                 }
                 channel.ack(msg);
             }

@@ -11,11 +11,13 @@ const ProblemPage = () => {
 
     useEffect(() => {
         const fetchProblem = async () => {
+            console.log(`Fetching problem with id: ${id}`);
             try {
                 const res = await axios.get(`http://localhost:5000/api/problems/${id}`);
                 setProblem(res.data);
+                console.log('Problem fetched successfully:', res.data);
             } catch (err) {
-                console.error(`Error fetching problem ${id}:`, err);
+                console.error(`❌ Error fetching problem ${id}:`, err);
             }
         };
         fetchProblem();
@@ -23,30 +25,37 @@ const ProblemPage = () => {
         // Cleanup interval on component unmount
         return () => {
             if (intervalRef.current) {
+                console.log('Clearing submission status polling interval');
                 clearInterval(intervalRef.current);
             }
         };
     }, [id]);
 
     const checkStatus = async (submissionId) => {
+        console.log(`Checking status for submission: ${submissionId}`);
         try {
             const res = await axios.get(`http://localhost:5000/api/submissions/${submissionId}`);
             const currentSubmission = res.data;
             setSubmission(currentSubmission);
+            console.log('Submission status updated:', currentSubmission);
 
             if (currentSubmission.status === 'Success' || currentSubmission.status === 'Fail') {
+                console.log('Polling stopped for submission:', submissionId);
                 clearInterval(intervalRef.current);
                 intervalRef.current = null;
             }
         } catch (err) {
-            console.error('Error checking status:', err);
+            console.error('❌ Error checking status:', err);
             clearInterval(intervalRef.current);
             intervalRef.current = null;
         }
     };
 
     const handleSubmit = async () => {
-        if (intervalRef.current) return; // Don't submit if already polling
+        if (intervalRef.current) {
+            console.warn('Submission already in progress.');
+            return;
+        }
 
         const payload = {
             problemId: id,
@@ -55,18 +64,21 @@ const ProblemPage = () => {
         };
 
         try {
+            console.log('Submitting code...', payload);
             setSubmission({ status: 'Submitting...', output: '' });
             const res = await axios.post('http://localhost:5000/api/submit', payload);
             const newSubmission = res.data;
             setSubmission(newSubmission);
+            console.log('Submission successful:', newSubmission);
 
             // Start polling
+            console.log('Starting polling for submission:', newSubmission._id);
             intervalRef.current = setInterval(() => {
                 checkStatus(newSubmission._id);
             }, 2000);
 
         } catch (err) {
-            console.error('Error submitting code:', err);
+            console.error('❌ Error submitting code:', err);
             setSubmission({ status: 'Error', output: 'An error occurred during submission.' });
         }
     };

@@ -8,11 +8,13 @@ const ProblemListPage = () => {
 
     useEffect(() => {
         const fetchProblems = async () => {
+            console.log('Fetching problems...');
             try {
                 const res = await axios.get('http://localhost:5000/api/problems');
                 setProblems(res.data);
+                console.log('Problems fetched successfully:', res.data);
             } catch (err) {
-                console.error('Error fetching problems:', err);
+                console.error('❌ Error fetching problems:', err);
             }
         };
         fetchProblems();

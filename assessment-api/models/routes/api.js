@@ -14,7 +14,11 @@ const QUEUE_NAME = 'submission_queue';
 // Redis client
 const redisClient = createClient({ url: REDIS_URI });
 redisClient.on('error', (err) => console.log('Redis Client Error', err));
-redisClient.connect();
+redisClient.connect().then(() => {
+    console.log('Connected to Redis');
+}).catch(err => {
+    console.error('Redis connection error:', err);
+});
 
 // @route   GET /api/problems
 // @desc    Get all problems

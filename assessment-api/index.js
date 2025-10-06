@@ -81,7 +81,6 @@ app.get("/", (req, res) => {
   res.send("API is working 2");
 });
 
-
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
     console.log(`Error: ${err.message}`);

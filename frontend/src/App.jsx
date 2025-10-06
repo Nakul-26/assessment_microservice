@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ProblemListPage from './pages/ProblemListPage';
 import ProblemPage from './pages/ProblemPage';
 import './App.css';
 
 function App() {
+    useEffect(() => {
+        console.log('App component mounted');
+    }, []);
+
     return (
         <Router>
             <div className="App">
