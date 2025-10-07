@@ -6,6 +6,34 @@ import { MongoClient, ServerApiVersion } from "mongodb";
 import API from "./models/routes/api.js"; // ensure this uses ESM too
 import mongoose from "mongoose";
 
+
+
+
+
+
+
+
+// test-rabbitmq.js
+import amqp from 'amqplib';
+
+const url = process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5672/';
+
+try {
+  const conn = await amqp.connect(url);
+  console.log('✅ Connected to RabbitMQ');
+  await conn.close();
+} catch (err) {
+  console.error('❌ RabbitMQ connection failed:', err.message);
+}
+
+
+
+
+
+
+
+
+
 dotenv.config();
 const app = express();
 
